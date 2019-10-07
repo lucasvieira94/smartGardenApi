@@ -1,0 +1,35 @@
+Resources:
+  dynamodbMeasureTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:provider.environment.dynamodbMeasureTable}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        # - AttributeName: sensor
+        #   AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+
+# Code to stream table alterations
+# Outputs:
+#   DynamodbCrawlersStreamArn:
+#     Value:
+#       Fn::GetAtt: [ dynamodbCrawlersTable, StreamArn ]
+#     Export:
+#       Name: DynamodbCrawlersStreamArn
+
+      # INDEX EXAMPLE
+      # GlobalSecondaryIndexes:
+      #   - IndexName: Sensor
+      #     KeySchema:
+      #       - AttributeName: sensor
+      #         KeyType: HASH
+      #       - AttributeName: createdAt
+      #         KeyType: RANGE
+      #     Projection:
+      #       ProjectionType: ALL

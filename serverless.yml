@@ -12,8 +12,8 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   memorySize:
     dev: 128
-    staging: 128
-    production: 128
+    # staging: 128
+    # production: 128
   # host:
   #   dev: app-dev.smartgarden.tk
   #   staging: staging.smartgarden.tk
@@ -49,18 +49,24 @@ provider:
     stage: ${self:custom.stage}
     # host: ${self:custom.host.${self:custom.stage}}
     baseFunctionName: ${self:custom.baseFunctionName}
+    dynamodbMeasureTable: ${self:service}-${self:custom.stage}-measures
 
 package:
-  # individually: true
+  individually: true
   exclude:
     - .serverless/**
     - .git/**
     - node_modules/**
 
 functions:
-  hello:
-    handler: handler.hello
+  DeviceTopicListener:
+    handler: src/functions/device.deviceTopicListener
+    iamRoleStatementsName: ${self:service}-${self:custom.stage}-DTL-lambdaRole
+    # iamRoleStatements:
+    #   - Effect: Allow]
+    #     Action: dynamodb:*
+    #     Resource: arn:aws:dynamodb:${self:provider.region}:514777035509:table/${self:provider.environment.dynamodbSourcesTable}
 
 resources:
-  # DYNAMO DRIVER TABLE
-  # - ${file(resources/dynamoDriverTable.yml)}
+  # DYNAMO MEASURES TABLE
+  - ${file(resources/dynamoMeasureTable.yml)}
