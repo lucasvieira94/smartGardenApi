@@ -1,0 +1,37 @@
+Resources:
+  dynamodbPlantTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:provider.environment.dynamodbPlantTable}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+        - AttributeName: createdAt
+          AttributeType: S
+        - AttributeName: gardenDeviceId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+
+# Code to stream table alterations
+# Outputs:
+#   DynamodbPlantsStreamArn:
+#     Value:
+#       Fn::GetAtt: [ dynamodbPlantTable, StreamArn ]
+#     Export:
+#       Name: DynamodbPlantsStreamArn
+
+      # INDEX EXAMPLE
+      GlobalSecondaryIndexes:
+        - IndexName: GardenDeviceId
+          KeySchema:
+            - AttributeName: gardenDeviceId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL

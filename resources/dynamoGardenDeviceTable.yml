@@ -1,0 +1,33 @@
+Resources:
+  dynamodbGardenDeviceTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:provider.environment.dynamodbGardenDeviceTable}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+        - AttributeName: gardenId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
+
+# Code to stream table alterations
+# Outputs:
+#   DynamodbCrawlersStreamArn:
+#     Value:
+#       Fn::GetAtt: [ dynamodbCrawlersTable, StreamArn ]
+#     Export:
+#       Name: DynamodbCrawlersStreamArn
+
+      # INDEX EXAMPLE
+      GlobalSecondaryIndexes:
+        - IndexName: GardenId
+          KeySchema:
+            - AttributeName: gardenId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL

@@ -4,11 +4,11 @@ const BaseModel = require('./baseModel')
 class MeasureModel extends BaseModel {
   // GETTERS, SETTERS AND FUNCTIONS
   set sensor(value) {
-    this._sensor = value;
+    this._sensor = value
   }
 
   get sensor() {
-    return this._sensor;
+    return this._sensor
   }
 
 }
@@ -21,14 +21,16 @@ MeasureModel.validatesPresenceOf(
   'id',
   'sensor',
   'value',
-  'measuredAt'
+  'measuredAt',
+  'plantId'
 )
 
 MeasureModel.validatesTypeOf({
   id: 'string',
   sensor: 'string',
-  value: 'string',
-  measuredAt: 'string'
+  value: 'number',
+  measuredAt: 'string',
+  plantId: 'number'
 })
 
 MeasureModel.beforeValidation(function() {
@@ -42,7 +44,8 @@ MeasureModel.addJsonAttributes(
   'sensor',
   'value',
   'state',
-  'measuredAt'
+  'measuredAt',
+  'plantId'
 )
 
 MeasureModel.generateUUIDasId('measuredAt')
@@ -55,7 +58,11 @@ MeasureModel.registerIndexes({
   Sensor: {
     hash: 'sensor',
     range: 'measuredAt'
+  },
+  PlantId: {
+    hash: 'plantId',
+    range: 'measuredAt'
   }
 })
 
-module.exports = MeasureModel;
+module.exports = MeasureModel

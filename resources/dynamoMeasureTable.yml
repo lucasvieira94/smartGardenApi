@@ -6,30 +6,42 @@ Resources:
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
-        # - AttributeName: sensor
-        #   AttributeType: S
+        - AttributeName: measuredAt
+          AttributeType: S
+        - AttributeName: sensor
+          AttributeType: S
+        - AttributeName: plantId
+          AttributeType: N
       KeySchema:
         - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-      StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
+      # StreamSpecification:
+      #   StreamViewType: NEW_AND_OLD_IMAGES
 
 # Code to stream table alterations
 # Outputs:
-#   DynamodbCrawlersStreamArn:
+#   DynamodbMeasuresStreamArn:
 #     Value:
-#       Fn::GetAtt: [ dynamodbCrawlersTable, StreamArn ]
+#       Fn::GetAtt: [ dynamodbMeasuresTable, StreamArn ]
 #     Export:
-#       Name: DynamodbCrawlersStreamArn
+#       Name: DynamodbMeasuresStreamArn
 
       # INDEX EXAMPLE
-      # GlobalSecondaryIndexes:
-      #   - IndexName: Sensor
-      #     KeySchema:
-      #       - AttributeName: sensor
-      #         KeyType: HASH
-      #       - AttributeName: createdAt
-      #         KeyType: RANGE
-      #     Projection:
-      #       ProjectionType: ALL
+      GlobalSecondaryIndexes:
+        - IndexName: Sensor
+          KeySchema:
+            - AttributeName: sensor
+              KeyType: HASH
+            - AttributeName: measuredAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: PlantId
+          KeySchema:
+            - AttributeName: plantId
+              KeyType: HASH
+            - AttributeName: measuredAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL

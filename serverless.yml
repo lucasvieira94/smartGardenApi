@@ -50,6 +50,9 @@ provider:
     # host: ${self:custom.host.${self:custom.stage}}
     baseFunctionName: ${self:custom.baseFunctionName}
     dynamodbMeasureTable: ${self:service}-${self:custom.stage}-measures
+    dynamodbGardenerTable: ${self:service}-${self:custom.stage}-garderners
+    dynamodbGardenDeviceTable: ${self:service}-${self:custom.stage}-garden-devices
+    dynamodbPlantTable: ${self:service}-${self:custom.stage}-plants
 
 package:
   individually: true
@@ -70,3 +73,9 @@ functions:
 resources:
   # DYNAMO MEASURES TABLE
   - ${file(resources/dynamoMeasureTable.yml)}
+  # DYNAMO GARDERNES TABLE
+  - ${file(resources/dynamoGardenerTable.yml)}
+  # DYNAMO GARDERN DEVICES TABLE
+  - ${file(resources/dynamoGardenDeviceTable.yml)}
+  # DYNAMO PLANTS TABLE
+  - ${file(resources/dynamoPlantTable.yml)}
