@@ -5,6 +5,7 @@ plugins:
   # - serverless-domain-manager
   - serverless-prune-plugin
   # - serverless-step-functions
+  - serverless-iam-roles-per-function
   - serverless-plugin-split-stacks
   - serverless-pseudo-parameters
 
@@ -65,10 +66,10 @@ functions:
   DeviceTopicListener:
     handler: src/functions/device.deviceTopicListener
     iamRoleStatementsName: ${self:service}-${self:custom.stage}-DTL-lambdaRole
-    # iamRoleStatements:
-    #   - Effect: Allow]
-    #     Action: dynamodb:*
-    #     Resource: arn:aws:dynamodb:${self:provider.region}:514777035509:table/${self:provider.environment.dynamodbSourcesTable}
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
 
 resources:
   # DYNAMO MEASURES TABLE

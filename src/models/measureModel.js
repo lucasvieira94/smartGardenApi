@@ -28,7 +28,7 @@ MeasureModel.validatesPresenceOf(
 MeasureModel.validatesTypeOf({
   id: 'string',
   sensor: 'string',
-  value: 'number',
+  value: 'string',
   measuredAt: 'string',
   plantId: 'number'
 })

@@ -53,4 +53,4 @@ GardenDeviceModel.registerIndexes({
   }
 })
 
-module.exports = GardenerModel
+module.exports = GardenDeviceModel

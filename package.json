@@ -36,13 +36,17 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "aws-iot-device-sdk": "^2.2.1",
     "aws-sdk": "^2.296.0",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
+    "minimist": "^1.2.0",
+    "moment-timezone": "^0.5.26",
     "serverless-iam-roles-per-function": "^1.0.4",
     "serverless-plugin-custom-roles": "^1.0.0",
     "serverless-plugin-scripts": "^1.0.2",
     "serverless-plugin-split-stacks": "1.5.5",
-    "source-map-support": "^0.5.9"
+    "source-map-support": "^0.5.9",
+    "urlify": "^0.3.6"
   }
 }

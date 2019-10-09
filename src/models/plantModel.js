@@ -21,7 +21,7 @@ PlantModel.validatesPresenceOf(
   'id',
   'name',
   'type',
-  'soilHumidity'
+  'soilHumidity',
   'soilHumidityStatus',
   'lumens',
   'lightStatus',
@@ -53,7 +53,7 @@ PlantModel.addJsonAttributes(
   'id',
   'name',
   'type',
-  'soilHumidity'
+  'soilHumidity',
   'soilHumidityStatus',
   'lumens',
   'lightStatus',
