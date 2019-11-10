@@ -46,11 +46,12 @@ provider:
     baseFunctionName: ${self:custom.baseFunctionName}
     dynamodbMeasureTable: ${self:service}-measures
     dynamodbGardenerTable: ${self:service}-garderners
-    dynamodbGardenDeviceTable: ${self:service}-garden-devices
+    dynamodbDeviceTable: ${self:service}-devices
+    dynamodbGardenTable: ${self:service}-gardens
     dynamodbPlantTable: ${self:service}-plants
     gardenerIdentityPoolName: GardenerIdentityPool
     gardenerUserPoolName: GardenerUserPool
-    # gardenerUserPoolId: ${cf:${self:service}-${self:custom.stage}.gardenerUserPoolId}
+    gardenerUserPoolId: ${cf:${self:service}-${self:custom.stage}.gardenerUserPoolId}
 
 package:
   individually: true
@@ -68,6 +69,19 @@ functions:
         Action: dynamodb:*
         Resource: '*'
 
+    NewDevice:
+      handler: src/functions/devices.newDevice
+      events:
+        - http:
+            path: devices
+            method: post
+            private: true
+      iamRoleStatementsName: ${self:service}-NewDevice-lambdaRole
+      iamRoleStatements:
+        - Effect: Allow
+          Action: dynamodb:*
+          Resource: '*'
+
   GetPlant:
     handler: src/functions/plants.getPlant
     events:
@@ -75,20 +89,49 @@ functions:
           path: plants/{plantId}
           method: get
           private: true
-    iamRoleStatementsName: ${self:service}-GetPLant-lambdaRole
+    iamRoleStatementsName: ${self:service}-Get-Plant-lambdaRole
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:*
         Resource: '*'
 
   NewPlant:
-    handler: src/functions/plants.getPlant
+    handler: src/functions/plants.newPlant
     events:
       - http:
           path: plants
           method: post
           private: true
-    iamRoleStatementsName: ${self:service}-NewPLant-lambdaRole
+    iamRoleStatementsName: ${self:service}-NewPlant-lambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
+
+  NewGardener:
+    handler: src/functions/gardeners.newGardener
+    events:
+      - http:
+          path: gardeners
+          method: post
+          private: true
+    iamRoleStatementsName: ${self:service}-NewGardener-lambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
+      - Effect: Allow
+        Action: cognito-idp:AdminCreateUser
+        Resource: arn:aws:cognito-idp:*
+
+  NewGarden:
+    handler: src/functions/gardens.newGarden
+    events:
+      - http:
+          path: gardens
+          method: post
+          private: true
+    iamRoleStatementsName: ${self:service}-NewGarden-lambdaRole
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:*
@@ -99,8 +142,10 @@ resources:
   - ${file(resources/dynamoMeasureTable.yml)}
   # DYNAMO GARDERNES TABLE
   - ${file(resources/dynamoGardenerTable.yml)}
-  # DYNAMO GARDERN DEVICES TABLE
-  - ${file(resources/dynamoGardenDeviceTable.yml)}
+  # DYNAMO GARDENS TABLE
+  - ${file(resources/dynamoGardenTable.yml)}
+  # DYNAMO GARDENERS DEVICES TABLE
+  - ${file(resources/dynamoDeviceTable.yml)}
   # DYNAMO PLANTS TABLE
   - ${file(resources/dynamoPlantTable.yml)}
   # COGNITO GARDENERS USER POOL

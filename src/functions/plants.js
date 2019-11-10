@@ -3,7 +3,7 @@ const moment = require('moment');
 const AWS = require('aws-sdk');
 const apiGateway = new AWS.APIGateway();
 
-const { PlantModel } = require('../models')
+const { PlantModel, GardenerModel, DeviceModel, GardenModel } = require('../models')
 
 module.exports.getPlant = async (event, context, callback) => {
 
@@ -27,28 +27,65 @@ module.exports.getPlant = async (event, context, callback) => {
 
 module.exports.newPlant = (event, context, callback) => {
   try {
-    const body = JSON.parse(event.body);
-    const plant = new PlantModel(body);
+    return new Promise(async (resolve, reject) => {
+      event = JSON.parse(event.body);
 
-    plant.save().then(() => {
-      callback(null, apiResponse(201, {
-        body: {
-          message: 'Plant registered successfully!',
-          plant: plant.toJson(),
-        },
-      }));
-    }).catch((errors) => {
-      callback(null, apiResponse(400, {
-        body: {
-          errors,
-          plant: plant.toJson(),
-        },
-      }));
-    });
-  } catch(e) {
+      let plant = event.garden;
+
+      var params = {
+        name: plant.name,
+        gardenerId: plant.gardenerId,
+        gardenId: plant.gardenId,
+        deviceId: plant.deviceId,
+        type: plant.type
+      };
+
+      plant = new PlantModel(body);
+
+      await plant.save().then(async () => {
+        let device = await DeviceModel.find(plant.deviceId).catch(error => {
+          reject(error)
+        })
+
+        device.plantsCount += 1
+
+        await device.save().catch(error => {
+          reject(error)
+        })
+
+        let garden = await GardenModel.find(plant.gardenId).catch(error => {
+          reject(error)
+        })
+
+        garden.plantsCount += 1
+
+        await garden.save().catch(error => {
+          reject(error)
+        })
+
+
+        callback(null, apiResponse(201, {
+          body: {
+            message: 'Plant registered successfully!',
+            plant: plant.toJson(),
+          },
+        }));
+
+        resolve(plant)
+      }).catch((errors) => {
+        callback(null, apiResponse(400, {
+          body: {
+            errors,
+            plant: plant.toJson(),
+          },
+        }));
+      });
+    })
+  } catch(error) {
+    console.log(error)
     callback(null, apiResponse(400, {
       body: {
-        message: 'invalid body',
+        message: 'Failed to create plant.',
       },
     }));
   }

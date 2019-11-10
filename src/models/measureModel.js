@@ -3,13 +3,13 @@ const BaseModel = require('./baseModel')
 
 class MeasureModel extends BaseModel {
   // GETTERS, SETTERS AND FUNCTIONS
-  set sensor(value) {
-    this._sensor = value
-  }
-
-  get sensor() {
-    return this._sensor
-  }
+  // set sensor(value) {
+  //   this._sensor = value
+  // }
+  //
+  // get sensor() {
+  //   return this._sensor
+  // }
 
 }
 

@@ -1,0 +1,21 @@
+Resources:
+  dynamodbGardenTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:provider.environment.dynamodbGardenTable}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: N
+        - AttributeName: gardenerId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes:
+        - IndexName: GardenerId
+          KeySchema:
+            - AttributeName: gardenerId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL

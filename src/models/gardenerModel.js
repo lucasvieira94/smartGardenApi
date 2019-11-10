@@ -3,13 +3,13 @@ const BaseModel = require('./baseModel')
 
 class GardenerModel extends BaseModel {
   // GETTERS, SETTERS AND FUNCTIONS
-  set name(value) {
-    this._name = value
-  }
-
-  get name() {
-    return this._name
-  }
+  // set name(value) {
+  //   this._name = value
+  // }
+  //
+  // get name() {
+  //   return this._name
+  // }
 
 }
 
@@ -18,18 +18,21 @@ GardenerModel.tableName = process.env.dynamodbGardenerTable
 
 GardenerModel.validatesPresenceOf(
   'id',
-  'name'
+  'name',
+  'email'
 )
 
 GardenerModel.validatesTypeOf({
   id: 'number',
-  name: 'string'
+  name: 'string',
+  email: 'string'
 })
 
 
 GardenerModel.addJsonAttributes(
   'id',
-  'name'
+  'name',
+  'email'
 )
 
 GardenerModel.registerIndexes({

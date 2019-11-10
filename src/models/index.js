@@ -1,11 +1,13 @@
 const MeasureModel = require('./measureModel')
 const GardenerModel = require('./gardenerModel')
-const GardenDeviceModel = require('./gardenDeviceModel')
+const DeviceModel = require('./deviceModel')
 const PlantModel = require('./plantModel')
+const GardenModel = require('./gardenModel')
 
 module.exports = {
   MeasureModel,
   GardenerModel,
-  GardenDeviceModel,
+  DeviceModel,
   PlantModel,
+  GardenModel,
 }

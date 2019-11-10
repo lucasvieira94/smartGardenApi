@@ -3,13 +3,13 @@ const BaseModel = require('./baseModel')
 
 class PlantModel extends BaseModel {
   // GETTERS, SETTERS AND FUNCTIONS
-  set sensor(value) {
-    this._sensor = value
-  }
-
-  get sensor() {
-    return this._sensor
-  }
+  // set sensor(value) {
+  //   this._sensor = value
+  // }
+  //
+  // get sensor() {
+  //   return this._sensor
+  // }
 
 }
 
@@ -25,9 +25,10 @@ PlantModel.validatesPresenceOf(
   'soilHumidityStatus',
   'lumens',
   'lightStatus',
-  'updatedAt',
   'createdAt',
-  'gardenDeviceId'
+  'deviceId',
+  'gardenId',
+  'gardenerId'
 )
 
 PlantModel.validatesTypeOf({
@@ -40,12 +41,23 @@ PlantModel.validatesTypeOf({
   lightStatus: 'string',
   createdAt: 'string',
   lastMeasuredAt: 'string',
-  gardenDeviceId: 'number'
+  deviceId: 'number',
+  gardenId: 'number',
+  gardenerId: 'number',
 })
 
-PlantModel.beforeValidation(function() {
-  if (!this.createdAt) {
+PlantModel.beforeCreation(function() {
+  if (!this.createdAt)
     this.createdAt = moment().tz('America/Sao_Paulo').format()
+
+  if (!this.soilHumidity) {
+    this.soilHumidity = 0
+    this.soilHumidityStatus = 'off'
+  }
+
+  if (!this.lumens) {
+    this.lumens = 0
+    this.lightStatus = 'off'
   }
 })
 
@@ -57,19 +69,24 @@ PlantModel.addJsonAttributes(
   'soilHumidityStatus',
   'lumens',
   'lightStatus',
-  'updatedAt',
   'createdAt',
-  'gardenDeviceId'
+  'deviceId',
+  'gardenId',
+  'gardenerId'
 )
 
 PlantModel.registerIndexes({
   base: {
-    hash: 'id',
-    rash: 'createdAt'
+    hash: 'id'
   },
-  GardenDeviceId: {
-    hash: 'gardenDeviceId',
-    rash: 'createdAt'
+  DeviceId: {
+    hash: 'deviceId'
+  },
+  GardenId: {
+    hash: 'GardenId'
+  },
+  GardenerId: {
+    hash: 'GardenerId'
   }
 })
 
