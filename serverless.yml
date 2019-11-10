@@ -2,39 +2,33 @@ service: smartGardenApi
 
 plugins:
   - serverless-webpack
-  # - serverless-domain-manager
+  - serverless-domain-manager
   - serverless-prune-plugin
   # - serverless-step-functions
   - serverless-iam-roles-per-function
-  - serverless-plugin-split-stacks
+  # - serverless-plugin-split-stacks
   - serverless-pseudo-parameters
 
 custom:
   stage: ${opt:stage, self:provider.stage}
   memorySize:
     dev: 128
-    # staging: 128
-    # production: 128
-  # host:
-  #   dev: app-dev.smartgarden.tk
-  #   staging: staging.smartgarden.tk
-  #   production: app.smartgarden.tk
+  host:
+    dev: smartgardens.tech
   webpack:
       webpackConfig: './webpack.config.js'
       includeModules: true
-    # customDomain:
-    #   domainName: api.smartgarden.tk
-    #   basePath: ${self:custom.stage}
-    #   stage: ${self:custom.stage}
-    #   createRoute53Record: true
-    #   certificateName: '*.smartgarden.tk'
+  customDomain:
+    domainName: api.smartgardens.tech
+    createRoute53Record: true
+    certificateName: '*.smartgardens.tech'
   prune:
     automatic: true
     number: 20
-  baseFunctionName: arn:aws:lambda:us-east-1:514777035509:function:${self:service}-${self:custom.stage}-
-  splitStacks:
-    perFunction: false
-    perType: true
+  baseFunctionName: arn:aws:lambda:us-east-1:514777035509:function:${self:service}-
+  # splitStacks:
+  #   perFunction: false
+  #   perType: true
 
 provider:
   name: aws
@@ -48,12 +42,15 @@ provider:
     serviceName: ${self:service}
     region: ${self:provider.region}
     stage: ${self:custom.stage}
-    # host: ${self:custom.host.${self:custom.stage}}
+    host: ${self:custom.host.${self:custom.stage}}
     baseFunctionName: ${self:custom.baseFunctionName}
-    dynamodbMeasureTable: ${self:service}-${self:custom.stage}-measures
-    dynamodbGardenerTable: ${self:service}-${self:custom.stage}-garderners
-    dynamodbGardenDeviceTable: ${self:service}-${self:custom.stage}-garden-devices
-    dynamodbPlantTable: ${self:service}-${self:custom.stage}-plants
+    dynamodbMeasureTable: ${self:service}-measures
+    dynamodbGardenerTable: ${self:service}-garderners
+    dynamodbGardenDeviceTable: ${self:service}-garden-devices
+    dynamodbPlantTable: ${self:service}-plants
+    gardenerIdentityPoolName: GardenerIdentityPool
+    gardenerUserPoolName: GardenerUserPool
+    # gardenerUserPoolId: ${cf:${self:service}-${self:custom.stage}.gardenerUserPoolId}
 
 package:
   individually: true
@@ -64,8 +61,34 @@ package:
 
 functions:
   DeviceTopicListener:
-    handler: src/functions/device.deviceTopicListener
-    iamRoleStatementsName: ${self:service}-${self:custom.stage}-DTL-lambdaRole
+    handler: src/functions/devices.deviceTopicListener
+    iamRoleStatementsName: ${self:service}-DevTopList-lambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
+
+  GetPlant:
+    handler: src/functions/plants.getPlant
+    events:
+      - http:
+          path: plants/{plantId}
+          method: get
+          private: true
+    iamRoleStatementsName: ${self:service}-GetPLant-lambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
+
+  NewPlant:
+    handler: src/functions/plants.getPlant
+    events:
+      - http:
+          path: plants
+          method: post
+          private: true
+    iamRoleStatementsName: ${self:service}-NewPLant-lambdaRole
     iamRoleStatements:
       - Effect: Allow
         Action: dynamodb:*
@@ -80,3 +103,7 @@ resources:
   - ${file(resources/dynamoGardenDeviceTable.yml)}
   # DYNAMO PLANTS TABLE
   - ${file(resources/dynamoPlantTable.yml)}
+  # COGNITO GARDENERS USER POOL
+  - ${file(resources/gardenerCognitoUserPool.yml)}
+  # COGNITO IDENTITY POOLS
+  - ${file(resources/gardenerCognitoIdentityPool.yml)}

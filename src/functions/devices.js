@@ -3,7 +3,7 @@ const awsIot = require('aws-iot-device-sdk')
 const { MeasureModel } = require('../models')
 
 module.exports.deviceTopicListener = (event, context, callback) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     console.log(event)
     let { state } = event
     console.log(state)

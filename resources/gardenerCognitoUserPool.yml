@@ -1,0 +1,44 @@
+Resources:
+  gardenerUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: ${self:provider.environment.gardenerUserPoolName}
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: false
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: false
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      AdminCreateUserConfig:
+        InviteMessageTemplate:
+          EmailMessage: '<h1>Sua conta na SmartGardens foi criada! :)</h1><p>Seu e-mail de acesso é {username} e sua senha temporária é {####}.'
+          # </p><p><a href="http://${self:custom.host.${self:custom.stage}}/admin/senha/temporaria?email={username}&password={####}">Clique aqui</a> para alterar sua senha e acessar sua conta.</p>'
+          EmailSubject: 'Conta SmartGardens e senha temporária.'
+        UnusedAccountValidityDays: 7
+        AllowAdminCreateUserOnly: true
+      EmailVerificationMessage: Seu código de verificação para a troca de senha é {####}.
+      EmailVerificationSubject: SmartGardens - Código de Verificação
+  gardenerUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn: gardenerUserPool
+    Properties:
+      ClientName: ${self:provider.environment.gardenerUserPoolName}-client
+      UserPoolId:
+        Ref: gardenerUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+        - USER_PASSWORD_AUTH
+
+
+Outputs:
+  gardenerUserPoolId:
+    Value:
+      Ref: gardenerUserPool
+  gardenerUserPoolClientId:
+    Value:
+      Ref: gardenerUserPoolClient
