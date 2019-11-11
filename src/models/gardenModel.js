@@ -16,7 +16,7 @@ class GardenModel extends BaseModel {
 GardenModel.idColumnName = 'id'
 GardenModel.tableName = process.env.dynamodbGardenTable
 
-GardenModel.beforeCreation(function() {
+GardenModel.beforeValidation(function() {
   if (!this.plantsCount)
     this.plantsCount = 0
 
@@ -36,7 +36,7 @@ GardenModel.validatesPresenceOf(
   'createdAt'
 )
 
-DeviceModel.validatesTypeOf({
+GardenModel.validatesTypeOf({
   id: 'number',
   name: 'string',
   plantsCount: 'number',

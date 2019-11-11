@@ -25,55 +25,49 @@ module.exports.deviceTopicListener = (event, context, callback) => {
 }
 
 module.exports.newDevice = (event, context, callback) => {
-  try {
-    return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+
+    if (event.body)
+      event = event.body
+    else
       event = JSON.parse(event.body);
 
-      let device = event.device;
-
-      var params = {
-        type: device.name,
-        gardenerId: device.gardenerId,
-        gardenId: device.gardenId
-      };
-
-      device = new DeviceModel(body);
-
-      await device.save().then(async () => {
-        let garden = await GardenModel.find(plant.gardenId).catch(error => {
-          reject(error)
-        })
-
-        garden.devicesCount += 1
-
-        await garden.save().catch(error => {
-          reject(error)
-        })
-
-
-        callback(null, apiResponse(201, {
-          body: {
-            message: 'Device registered successfully!',
-            plant: plant.toJson(),
-          },
-        }));
-
-        resolve(plant)
-      }).catch((errors) => {
-        callback(null, apiResponse(400, {
-          body: {
-            errors,
-            plant: plant.toJson(),
-          },
-        }));
-      });
+    let id = await DeviceModel.findAll().then(devices => {
+      return (devices.length + 1)
+    }).catch(error => {
+      callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to retrieve devices on database." }) })
+      reject(error)
     })
-  } catch(error) {
-    console.log(error)
-    callback(null, apiResponse(400, {
-      body: {
-        message: 'Failed to create device.',
-      },
-    }));
-  }
+
+    let device = event.device;
+
+    var params = {
+      id: id,
+      type: device.type,
+      gardenerId: device.gardenerId,
+      gardenId: device.gardenId
+    };
+
+    device = new DeviceModel(params);
+
+    await device.save().then(async () => {
+      let garden = await GardenModel.find(device.gardenId).catch(error => {
+        reject(error)
+      })
+
+      garden.devicesCount += 1
+
+      await garden.save().catch(error => {
+        reject(error)
+      })
+
+      callback(null, { statusCode: 200, body: JSON.stringify({ message: `Device successfully created!` }) });
+
+      resolve(device)
+    }).catch((error) => {
+      console.log(error)
+      callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to save device on database." }) })
+      reject(error)
+    });
+  })
 }

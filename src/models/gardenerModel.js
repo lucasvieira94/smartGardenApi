@@ -25,14 +25,16 @@ GardenerModel.validatesPresenceOf(
 GardenerModel.validatesTypeOf({
   id: 'number',
   name: 'string',
-  email: 'string'
+  email: 'string',
+  cognitoUserId: 'string'
 })
 
 
 GardenerModel.addJsonAttributes(
   'id',
   'name',
-  'email'
+  'email',
+  'cognitoUserId'
 )
 
 GardenerModel.registerIndexes({

@@ -46,7 +46,7 @@ PlantModel.validatesTypeOf({
   gardenerId: 'number',
 })
 
-PlantModel.beforeCreation(function() {
+PlantModel.beforeValidation(function() {
   if (!this.createdAt)
     this.createdAt = moment().tz('America/Sao_Paulo').format()
 

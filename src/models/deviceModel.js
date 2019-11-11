@@ -3,20 +3,20 @@ const BaseModel = require('./baseModel')
 
 class DeviceModel extends BaseModel {
   // GETTERS, SETTERS AND FUNCTIONS
-  set name(value) {
-    this._name = value
-  }
-
-  get name() {
-    return this._name
-  }
+  // set name(value) {
+  //   this._name = value
+  // }
+  //
+  // get name() {
+  //   return this._name
+  // }
 
 }
 
 DeviceModel.idColumnName = 'id'
 DeviceModel.tableName = process.env.dynamodbDeviceTable
 
-DeviceModel.beforeCreation(function() {
+DeviceModel.beforeValidation(function() {
   if (!this.plantsCount)
     this.plantsCount = 0
 
@@ -29,7 +29,7 @@ DeviceModel.beforeCreation(function() {
 
 DeviceModel.validatesPresenceOf(
   'id',
-  'deviceType',
+  'type',
   'status',
   'plantsCount',
   'gardenId',
@@ -39,7 +39,7 @@ DeviceModel.validatesPresenceOf(
 
 DeviceModel.validatesTypeOf({
   id: 'number',
-  deviceType: 'string',
+  type: 'string',
   status: 'string',
   plantsCount: 'number',
   gardenId: 'number',

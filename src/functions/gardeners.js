@@ -9,11 +9,22 @@ const { GardenerModel } = require('../models')
 module.exports.newGardener = async (event, context, callback) => {
   return new Promise(async (resolve, reject) => {
 
-    event = JSON.parse(event.body);
+    if (event.body)
+      event = event.body
+    else
+      event = JSON.parse(event.body);
 
     let gardener = event.gardener;
 
+    let id = await GardenerModel.findAll().then(garderners => {
+      return (garderners.length + 1)
+    }).catch(error => {
+      callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to retrieve gardeners on database." }) })
+      reject(error)
+    })
+
     var params = {
+      id: id,
       name: gardener.name,
       email: gardener.email
     };
@@ -42,9 +53,14 @@ module.exports.newGardener = async (event, context, callback) => {
           }
         ],
       }).promise().then(data => {
-        event.gardener.username = data.User.Username;
-        callback(null, { statusCode: 200, body: JSON.stringify({ message: `Gardener ${event.gardener.username} successfully created!` }) });
-        resolve(gardener);
+        gardener.cognitoUserId = data.User.Username
+        gardener.save().then(gardener => {
+          callback(null, { statusCode: 200, body: JSON.stringify({ message: `Gardener ${gardener.name} successfully created!` }) });
+          resolve(gardener);
+        }).catch(error => {
+          callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to update gardener cognito id." }) })
+          reject(error)
+        })
       }).catch(error => {
         console.log(error)
         callback(null, { statusCode: 422, body: JSON.stringify({ message: "Failed to create gardener on cognito." }) });

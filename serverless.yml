@@ -69,18 +69,18 @@ functions:
         Action: dynamodb:*
         Resource: '*'
 
-    NewDevice:
-      handler: src/functions/devices.newDevice
-      events:
-        - http:
-            path: devices
-            method: post
-            private: true
-      iamRoleStatementsName: ${self:service}-NewDevice-lambdaRole
-      iamRoleStatements:
-        - Effect: Allow
-          Action: dynamodb:*
-          Resource: '*'
+  NewDevice:
+    handler: src/functions/devices.newDevice
+    events:
+      - http:
+          path: devices
+          method: post
+          private: true
+    iamRoleStatementsName: ${self:service}-NewDevice-lambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:*
+        Resource: '*'
 
   GetPlant:
     handler: src/functions/plants.getPlant

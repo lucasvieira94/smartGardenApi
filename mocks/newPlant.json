@@ -1,0 +1,11 @@
+{
+  "body": {
+    "plant": {
+      "name": "Alecrim",
+      "type": "tempero",
+      "gardenerId": 1,
+      "gardenId": 1,
+      "deviceId": 1
+    }
+  }
+}

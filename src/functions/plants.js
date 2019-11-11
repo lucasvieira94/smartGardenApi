@@ -28,11 +28,22 @@ module.exports.getPlant = async (event, context, callback) => {
 module.exports.newPlant = (event, context, callback) => {
   try {
     return new Promise(async (resolve, reject) => {
-      event = JSON.parse(event.body);
+      if (event.body)
+        event = event.body
+      else
+        event = JSON.parse(event.body);
 
-      let plant = event.garden;
+      let id = await PlantModel.findAll().then(plants => {
+        return (plants.length + 1)
+      }).catch(error => {
+        callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to retrieve plant on database." }) })
+        reject(error)
+      })
+
+      let plant = event.plant;
 
       var params = {
+        id: id,
         name: plant.name,
         gardenerId: plant.gardenerId,
         gardenId: plant.gardenId,
@@ -40,7 +51,7 @@ module.exports.newPlant = (event, context, callback) => {
         type: plant.type
       };
 
-      plant = new PlantModel(body);
+      plant = new PlantModel(params);
 
       await plant.save().then(async () => {
         let device = await DeviceModel.find(plant.deviceId).catch(error => {
@@ -63,22 +74,11 @@ module.exports.newPlant = (event, context, callback) => {
           reject(error)
         })
 
-
-        callback(null, apiResponse(201, {
-          body: {
-            message: 'Plant registered successfully!',
-            plant: plant.toJson(),
-          },
-        }));
+        callback(null, { statusCode: 200, body: JSON.stringify({ message: "Plant registered successfully!", body: plant.toJson() }) })
 
         resolve(plant)
-      }).catch((errors) => {
-        callback(null, apiResponse(400, {
-          body: {
-            errors,
-            plant: plant.toJson(),
-          },
-        }));
+      }).catch((error) => {
+        reject(error)
       });
     })
   } catch(error) {

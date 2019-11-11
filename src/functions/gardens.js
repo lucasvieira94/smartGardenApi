@@ -9,11 +9,22 @@ const { GardenModel } = require('../models')
 module.exports.newGarden = async (event, context, callback) => {
   return new Promise(async (resolve, reject) => {
 
-    event = JSON.parse(event.body);
+    if (event.body)
+      event = event.body
+    else
+      event = JSON.parse(event.body);
+
+    let id = await GardenModel.findAll().then(garderns => {
+      return (garderns.length + 1)
+    }).catch(error => {
+      callback(null, { statusCode: 400, body: JSON.stringify({ message: "Failed to retrieve gardens on database." }) })
+      reject(error)
+    })
 
     let garden = event.garden;
 
     var params = {
+      id: id,
       name: garden.name,
       gardenerId: garden.gardenerId
     };

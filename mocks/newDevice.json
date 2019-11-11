@@ -1,0 +1,9 @@
+{
+  "body": {
+    "device": {
+      "type": "Raspberry Pi B+",
+      "gardenerId": 1,
+      "gardenId": 1
+    }
+  }
+}
