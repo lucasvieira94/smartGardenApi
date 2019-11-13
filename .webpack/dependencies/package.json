@@ -1,0 +1,14 @@
+{
+  "name": "smartGardenApi",
+  "version": "1.0.0",
+  "description": "Packaged externals for smartGardenApi",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "moment-timezone": "^0.5.26",
+    "aws-sdk": "^2.296.0",
+    "moment": "",
+    "urlify": "^0.3.6",
+    "uuid": ""
+  }
+}
