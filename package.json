@@ -40,7 +40,7 @@
     "aws-sdk": "^2.296.0",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "moment-timezone": "^0.5.26",
     "serverless-domain-manager": "^3.3.0",
     "serverless-iam-roles-per-function": "^1.0.4",
